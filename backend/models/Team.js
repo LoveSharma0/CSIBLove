@@ -10,11 +10,19 @@ const TeamSchema = new mongoose.Schema({
   description: {
     type: String
   },
+  
+  leader: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
 
-  createdBy: {
+  members: [
+    {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   }
+  ]
 
 }, { timestamps: true });
 
