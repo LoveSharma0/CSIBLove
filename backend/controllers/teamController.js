@@ -5,10 +5,10 @@ const Team = require("../models/Team");
 exports.createTeam = async (req, res) => {
   try {
 
-    const { name, description } = req.body;
+    const { teamName, description } = req.body;
 
     const team = new Team({
-      name,
+      teamName,
       description,
       leader: req.user.id,
       members: [req.user.id]
@@ -78,7 +78,7 @@ exports.addMember = async (req, res) => {
 
 
 
-// GET TEAMS OF LOGGED IN USER
+// GET MY TEAMS
 exports.getMyTeams = async (req, res) => {
   try {
 
@@ -91,6 +91,96 @@ exports.getMyTeams = async (req, res) => {
     res.status(200).json({
       success: true,
       teams
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
+
+
+// GET TEAM MEMBERS
+exports.getTeamMembers = async (req, res) => {
+  try {
+
+    const team = await Team.findById(req.params.teamId).populate("members");
+
+    if (!team) {
+      return res.status(404).json({
+        success: false,
+        message: "Team not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      members: team.members
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
+
+
+// REMOVE MEMBER
+exports.removeMember = async (req, res) => {
+  try {
+
+    const { teamId, userId } = req.params;
+
+    const team = await Team.findById(teamId);
+
+    team.members = team.members.filter(
+      member => member.toString() !== userId
+    );
+
+    await team.save();
+
+    res.json({
+      success: true,
+      message: "Member removed"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
+
+
+// UPDATE TEAM
+exports.updateTeam = async (req, res) => {
+  try {
+
+    const { teamName, description } = req.body;
+
+    const team = await Team.findByIdAndUpdate(
+      req.params.teamId,
+      { teamName, description },
+      { new: true }
+    );
+
+    res.json({
+      success: true,
+      team
     });
 
   } catch (error) {
