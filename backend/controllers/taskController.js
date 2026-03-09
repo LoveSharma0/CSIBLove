@@ -70,3 +70,38 @@ message: error.message
 
 }
 };
+// UPDATE TASK STATUS
+exports.updateTaskStatus = async (req, res) => {
+try {
+
+const { taskId } = req.params;
+const { status } = req.body;
+
+const task = await Task.findById(taskId);
+
+if (!task) {
+return res.status(404).json({
+success: false,
+message: "Task not found"
+});
+}
+
+task.status = status;
+
+await task.save();
+
+res.status(200).json({
+success: true,
+message: "Task status updated successfully",
+task
+});
+
+} catch (error) {
+
+res.status(500).json({
+success: false,
+message: error.message
+});
+
+}
+};
