@@ -1,8 +1,11 @@
 const Team = require("../models/Team");
 
+
+// CREATE TEAM
 exports.createTeam = async (req, res) => {
   try {
-    const { teamName, description } = req.body;
+
+    const { name, description } = req.body;
 
     const team = new Team({
       name,
@@ -14,15 +17,57 @@ exports.createTeam = async (req, res) => {
     await team.save();
 
     res.status(201).json({
-      success: true,
       message: "Team created successfully",
       team
     });
 
   } catch (error) {
+
     res.status(500).json({
-      success: false,
-      message: error.message
+      message: "Server error",
+      error: error.message
     });
+
+  }
+};
+
+
+// ADD MEMBER
+exports.addMember = async (req, res) => {
+  try {
+
+    const { teamId, userId } = req.body;
+
+    const team = await Team.findById(teamId);
+
+    if (!team) {
+      return res.status(404).json({
+        message: "Team not found"
+      });
+    }
+
+    // prevent duplicate member
+    if (team.members.includes(userId)) {
+      return res.status(400).json({
+        message: "User already in team"
+      });
+    }
+
+    team.members.push(userId);
+
+    await team.save();
+
+    res.json({
+      message: "Member added successfully",
+      team
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Server error",
+      error: error.message
+    });
+
   }
 };

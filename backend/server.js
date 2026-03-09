@@ -4,12 +4,14 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 
-// Routes
+
+// ROUTES
 const authRoutes = require("./routes/authRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 
-// Middleware
+
+// MIDDLEWARE
 const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
@@ -17,15 +19,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+// DATABASE
 connectDB();
 
+
+// ROUTES
 app.use("/api/auth", authRoutes);
+
 app.use("/api/teams", teamRoutes);
 
-
 app.use("/api", authMiddleware, protectedRoutes);
-
-
 
 
 app.get("/", (req, res) => {
@@ -33,9 +37,9 @@ app.get("/", (req, res) => {
 });
 
 
-
-const PORT = 5000;
+// SERVER
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log('Server running on port ${PORT}');
 });
