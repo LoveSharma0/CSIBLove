@@ -105,3 +105,49 @@ message: error.message
 
 }
 };
+// UPDATE TASK (ROLE BASED)
+exports.updateTask = async (req, res) => {
+try {
+
+const { taskId } = req.params;
+const { title, description, priority, deadline } = req.body;
+
+const task = await Task.findById(taskId);
+
+if (!task) {
+return res.status(404).json({
+success:false,
+message:"Task not found"
+});
+}
+
+// only assigned user can update
+if(task.assignedTo.toString() !== req.user.id){
+return res.status(403).json({
+success:false,
+message:"You are not authorized to update this task"
+});
+}
+
+task.title = title || task.title;
+task.description = description || task.description;
+task.priority = priority || task.priority;
+task.deadline = deadline || task.deadline;
+
+await task.save();
+
+res.status(200).json({
+success:true,
+message:"Task updated successfully",
+task
+});
+
+}catch(error){
+
+res.status(500).json({
+success:false,
+message:error.message
+});
+
+}
+};

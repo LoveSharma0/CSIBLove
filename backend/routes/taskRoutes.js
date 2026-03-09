@@ -14,4 +14,6 @@ router.put("/assign", authMiddleware, taskController.assignTask);
 router.put("/status/:taskId", authMiddleware, 
 taskController.updateTaskStatus);
 
+router.put("/update/:taskId", authMiddleware, taskController.updateTask);
+
 module.exports = router;
