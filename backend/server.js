@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const teamRoutes = require("./routes/teamRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 
 // MIDDLEWARE
@@ -26,10 +27,12 @@ connectDB();
 
 // ROUTES
 app.use("/api/auth", authRoutes);
+app.use("/api", authMiddleware, protectedRoutes);
 
 app.use("/api/teams", teamRoutes);
 
-app.use("/api", authMiddleware, protectedRoutes);
+
+app.use("/api/tasks",taskRoutes);
 
 
 app.get("/", (req, res) => {
