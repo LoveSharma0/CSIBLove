@@ -17,6 +17,7 @@ exports.createTeam = async (req, res) => {
     await team.save();
 
     res.status(201).json({
+      success: true,
       message: "Team created successfully",
       team
     });
@@ -24,12 +25,13 @@ exports.createTeam = async (req, res) => {
   } catch (error) {
 
     res.status(500).json({
-      message: "Server error",
-      error: error.message
+      success: false,
+      message: error.message
     });
 
   }
 };
+
 
 
 // ADD MEMBER
@@ -42,13 +44,14 @@ exports.addMember = async (req, res) => {
 
     if (!team) {
       return res.status(404).json({
+        success: false,
         message: "Team not found"
       });
     }
 
-    // prevent duplicate member
     if (team.members.includes(userId)) {
       return res.status(400).json({
+        success: false,
         message: "User already in team"
       });
     }
@@ -57,7 +60,8 @@ exports.addMember = async (req, res) => {
 
     await team.save();
 
-    res.json({
+    res.status(200).json({
+      success: true,
       message: "Member added successfully",
       team
     });
@@ -65,8 +69,35 @@ exports.addMember = async (req, res) => {
   } catch (error) {
 
     res.status(500).json({
-      message: "Server error",
-      error: error.message
+      success: false,
+      message: error.message
+    });
+
+  }
+};
+
+
+
+// GET TEAMS OF LOGGED IN USER
+exports.getMyTeams = async (req, res) => {
+  try {
+
+    const userId = req.user.id;
+
+    const teams = await Team.find({
+      members: userId
+    });
+
+    res.status(200).json({
+      success: true,
+      teams
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
     });
 
   }

@@ -4,7 +4,7 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
-const { createTeam, addMember } = require("../controllers/teamController");
+const { createTeam, addMember, getMyTeams } = require("../controllers/teamController");
 
 
 // CREATE TEAM
@@ -22,6 +22,12 @@ router.post(
   authMiddleware,
   roleMiddleware("Admin", "TeamLeader"),
   addMember
+);
+// Get My Token
+router.get(
+    "/My-teams",
+    authMiddleware,
+    getMyTeams
 );
 
 module.exports = router;
